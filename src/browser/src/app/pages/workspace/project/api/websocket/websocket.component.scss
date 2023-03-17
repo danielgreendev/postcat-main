@@ -1,0 +1,111 @@
+:host {
+  overflow: initial;
+
+  .websocket-header {
+    .ant-input,
+    .ant-btn {
+      height: 40px;
+    }
+  }
+}
+
+.message-item {
+  @apply inline-flex items-center px-2 py-3 hover:cursor-pointer;
+
+  color: var(--text-secondary-color);
+
+  &:hover {
+    background-color: var(--item-hover-background-color);
+  }
+}
+
+.top-line {
+  border-top: 1px solid var(--border-color);
+}
+
+.bottom-line {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.left-1 {
+  transform: translateX(-5px);
+}
+
+.status {
+  border-radius: 5px;
+
+  &.status_Connected {
+    color: var(--success-color);
+    background-color: rgb(21 133 101 / 20%);
+    box-shadow: 0 0 10px rgb(21 133 101 / 20%);
+  }
+
+  &.status_Disconnect {
+    color: var(--danger-color);
+    background-color: rgb(100 1 37 / 10%);
+    box-shadow: 0 0 10px rgb(100 1 37 / 10%);
+  }
+
+  &.status_Connecting {
+    color: var(--success-hover-color);
+    background-color: rgb(21 133 101 / 10%);
+    box-shadow: 0 0 10px rgb(21 133 101 / 10%);
+  }
+}
+
+.send_icon {
+  background-color: rgb(166 154 189 / 10%);
+}
+
+.get_icon {
+  background-color: rgb(21 133 101 / 10%);
+}
+
+.start_icon {
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.end_icon {
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+:host ::ng-deep {
+  .main-bg {
+    background-color: var(--bar-background-color) !important;
+
+    &:focus,
+    &:active,
+    &:target {
+      background-color: var(--background-color) !important;
+    }
+  }
+
+  .no-radius-select {
+    .ant-select-selector {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-content-holder {
+    overflow: auto;
+  }
+
+  .ant-tabs-content {
+    height: 100%;
+  }
+
+  .headers {
+    padding-left: 33px;
+
+    ul {
+      padding: 0;
+    }
+  }
+}

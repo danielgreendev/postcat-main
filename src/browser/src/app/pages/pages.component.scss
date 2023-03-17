@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+
+  /**
+   ! can't be delete,for pc-debug-component
+   */
+  flex: 1;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.home-container {
+  height: 100%;
+}
+
+.home {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+:host ::ng-deep {
+  .home-container {
+    --body-height: calc(100vh - var(--layout-header-height) - var(--layout-footer-height) - var(--remote-notification-height, 0));
+
+    height: var(--body-height);
+
+    router-outlet + * {
+      display: block;
+      height: 100%;
+
+      // height: var(--body-height);
+    }
+  }
+}
+
+::ng-deep {
+  .cookie-notification {
+    width: 200px;
+  }
+}

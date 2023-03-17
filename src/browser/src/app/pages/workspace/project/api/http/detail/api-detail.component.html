@@ -1,0 +1,113 @@
+<div class="w-full p-base">
+  <nz-skeleton *ngIf="!globalStore.isLocal" [nzLoading]="!model?.uri" [nzActive]="true"> </nz-skeleton>
+  <div *ngIf="model?.uri">
+    <div class="flex flex-wrap items-center">
+      <div class="flex items-center">
+        <nz-tag [class]="model.protocol | apiFormater : 'protocal' | lowercase">{{ model.protocol | apiFormater : 'protocal' }}</nz-tag>
+        <eo-api-methods-tag [type]="model?.apiAttrInfo?.requestMethod | apiFormater : 'requestMethod'"></eo-api-methods-tag>
+      </div>
+      <p class="flex-1" [nzContent]="url" nz-typography nzCopyable nzEllipsis [nzCopyText]="url" [nzCopyIcons]="[copedIcon, copedIcon]">
+      </p>
+      <ng-template #copedIcon>
+        <button eo-ng-button nzType="text"><eo-iconpark-icon name="copy"></eo-iconpark-icon></button>
+      </ng-template>
+    </div>
+    <p class="truncate mt-[10px]">{{ model.name }}</p>
+    <!-- Request Headers -->
+    <nz-collapse *ngIf="model.requestParams?.headerParams?.length" class="w-full mt-[20px]">
+      <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Request Headers">
+        <eo-api-detail-form
+          class="api-detail-form-table"
+          [model]="model.requestParams?.headerParams"
+          tid="requestHeaders"
+          module="header"
+        ></eo-api-detail-form>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <!-- Query params -->
+    <nz-collapse *ngIf="model.requestParams?.queryParams?.length" class="w-full mt-[20px]">
+      <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Query">
+        <eo-api-detail-form
+          tid="queryParams"
+          class="api-detail-form-table"
+          [model]="model.requestParams?.queryParams"
+          module="query"
+        ></eo-api-detail-form>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <!-- Rest params -->
+    <nz-collapse *ngIf="model.requestParams?.restParams?.length" class="w-full mt-[20px]">
+      <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="REST">
+        <eo-api-detail-form
+          tid="restParams"
+          class="api-detail-form-table"
+          [model]="model.requestParams?.restParams"
+          module="rest"
+        ></eo-api-detail-form>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <!-- Body -->
+    <nz-collapse
+      *ngIf="[TYPE_API_BODY.Binary,TYPE_API_BODY.Raw].includes(model.apiAttrInfo.contentType)?
+    model.requestParams?.bodyParams?.[0]?.binaryRawData:model.requestParams?.bodyParams?.length"
+      class="w-full mt-[20px]"
+    >
+      <nz-collapse-panel [nzActive]="true" [nzHeader]="bodyParamsHeader">
+        <ng-template #bodyParamsHeader>
+          <div nz-row nzAlign="middle">
+            <span class="mr-[10px]" i18n>Body</span>
+            <nz-tag nzColor="default">{{ CONST.BODY_TYPE[model.apiAttrInfo.contentType] }}</nz-tag>
+            <!-- <nz-tag *ngIf="[TYPE_API_BODY.JSONArray, TYPE_API_BODY.JSON].includes(model.apiAttrInfo.contentType)" nzColor="default" i18n>{{
+              model.apiAttrInfo.contentType === TYPE_API_BODY.JSONArray ? 'Array' : 'Object'
+            }}</nz-tag> -->
+          </div>
+        </ng-template>
+        <eo-api-detail-body
+          tid="requestBody"
+          [bodyType]="model.apiAttrInfo.contentType"
+          [model]="model.requestParams?.bodyParams"
+        ></eo-api-detail-body>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <!-- Response -->
+    <nz-collapse *ngIf="model.responseList?.[0]?.responseParams?.bodyParams?.length" class="w-full mt-[20px]">
+      <nz-collapse-panel [nzActive]="true" [nzHeader]="responseParamsHeader">
+        <ng-template #responseParamsHeader>
+          <div nz-row nzAlign="middle">
+            <span class="mr-[10px]" i18n>Response</span>
+            <nz-tag nzColor="default">{{ CONST.BODY_TYPE[model.responseList?.[0]?.contentType] }}</nz-tag>
+            <!-- <nz-tag
+              *ngIf="[TYPE_API_BODY.JSONArray, TYPE_API_BODY.JSON].includes(model.responseList?.[0]?.contentType)"
+              nzColor="default"
+              i18n
+              >{{ model.responseList?.[0]?.contentType === TYPE_API_BODY.JSONArray ? 'Array' : 'Object' }}</nz-tag
+            > -->
+          </div>
+        </ng-template>
+        <eo-api-detail-body
+          tid="responseBody"
+          [bodyType]="model.responseList?.[0]?.contentType"
+          [model]="model.responseList?.[0]?.responseParams?.bodyParams"
+        ></eo-api-detail-body>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <!-- Response headers -->
+    <nz-collapse *ngIf="model.responseList?.[0]?.responseParams?.headerParams?.length" class="w-full mt-[20px]">
+      <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="Response Headers">
+        <eo-api-detail-form
+          class="api-detail-form-table"
+          [model]="model.responseList?.[0]?.responseParams?.headerParams"
+          module="header"
+          tid="responseHeaders"
+        ></eo-api-detail-form>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <!-- MOCK -->
+    <nz-collapse *ngIf="electron.isElectron" class="w-full my-[20px]">
+      <nz-collapse-panel [nzActive]="true" i18n-nzHeader nzHeader="MOCK">
+        <eo-api-mock-table [apiData]="model" class="!p-0" [canEdit]="false"> </eo-api-mock-table>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </div>
+</div>

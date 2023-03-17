@@ -1,0 +1,48 @@
+.basic_info_bar {
+  @apply flex justify-between;
+
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.test-success {
+  background-color: #00785a;
+  border: 1px solid #05654d;
+  color: #fff;
+}
+
+.test-default {
+  background-color: #a9a9a9;
+  border: 1px solid #a9a9a9;
+  color: #fff;
+}
+
+.test-error {
+  background-color: #ff3c32;
+  border: 1px solid #ff3c32;
+  color: #fff;
+}
+
+.test-warning {
+  background-color: #ff3c32;
+  border: 1px solid #ff625a;
+  color: #fff;
+}
+
+:host ::ng-deep {
+  .eo_alert_bar {
+    margin-bottom: 5px;
+
+    .ant-alert-info {
+      background-color: #fff;
+      border: 1px solid #4c9e81;
+    }
+  }
+
+  .ant-code-editor {
+    height: calc(var(--bottom-height) - 156px);
+  }
+}

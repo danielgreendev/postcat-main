@@ -1,0 +1,52 @@
+<section class="flex-shrink-0 p-0 left tree-sider">
+  <div class="m-[10px]">
+    <!-- <eo-ng-input-group class="!rounded-full">
+      <input type="text" eo-ng-input class="flex-1 w-full px-3" i18n-placeholder="@@Search" placeholder="Search" [(ngModel)]="keyword" [nzAutocomplete]="auto" /> -->
+    <eo-ng-auto-complete
+      [(ngModel)]="keyword"
+      (ngModelChange)="onInput($event)"
+      [nzControl]="true"
+      [nzOptions]="searchOptions"
+      [nzPrefix]="prefixTemplateUser"
+      i18n-nzPlaceholder="@@Search"
+      nzPlaceholder="Search"
+    ></eo-ng-auto-complete>
+    <!-- </eo-ng-input-group> -->
+    <ng-template #prefixTemplateUser
+      ><svg class="iconpark-icon">
+        <use href="#search"></use></svg
+    ></ng-template>
+  </div>
+  <!-- Fixed Group -->
+  <eo-ng-tree-default
+    [nzData]="treeNodes"
+    [nzSelectedKeys]="nzSelectedKeys"
+    #apiGroup
+    [nzHideUnMatched]="true"
+    (nzClick)="clickTreeItem($event)"
+    nzBlockNode
+    [nzTreeTemplate]="nzTreeTemplate"
+  ></eo-ng-tree-default>
+  <ng-template #nzTreeTemplate let-node let-origin="origin">
+    <div class="pl-[18px] w-full">
+      <div class="flex items-center tree-node" *ngIf="!node.origin?.isFixed && node.isLeaf">
+        <eo-iconpark-icon *ngIf="node.icon" [name]="node.icon" class="mr-2 h-[14px] mt-[-4px]"></eo-iconpark-icon>
+        <span class="truncate node_title">{{ node.title }}</span>
+      </div>
+    </div>
+  </ng-template>
+</section>
+<section class="flex-1 min-w-0">
+  <eo-extension-list
+    *ngIf="!hasExtension"
+    [keyword]="keyword.trim()"
+    [type]="selectGroup"
+    (selectChange)="selectExtension($event)"
+  ></eo-extension-list>
+  <eo-extension-detail
+    *ngIf="hasExtension"
+    [extensionData]="getExtension"
+    [nzSelectedIndex]="nzSelectedIndex"
+    (goBack)="selectExtension()"
+  ></eo-extension-detail>
+</section>

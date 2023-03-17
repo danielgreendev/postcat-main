@@ -1,0 +1,128 @@
+<eo-ng-layout class="layout">
+  <eo-ng-sider
+    [nzWidth]="siderWidth"
+    nz-resizable
+    [nzMinWidth]="120"
+    [nzMaxWidth]="400"
+    (nzResize)="onSideResize($event)"
+    (nzResizeEnd)="onResizeEnd()"
+  >
+    <eo-ng-content class="api-container-tabs">
+      <eo-env-list class="flex-auto block tree-sider" *ngIf="sidebar.currentID === '@eo-core-env'"></eo-env-list>
+      <eo-ng-tabset
+        *ngIf="store.isShare || ['@eo-core-apimanger'].includes(sidebar.currentID)"
+        class="group-tabset"
+        [ngClass]="{ 'share-group-tabset': store.isShare }"
+        nzCentered
+        eo-ng-tabset
+        [(nzSelectedIndex)]="tabsIndex"
+        (nzSelectChange)="onGroupTabSelectChange($event)"
+      >
+        <eo-ng-tab [nzTitle]="apiTitle">
+          <ng-template #apiTitle>
+            <span
+              i18n-nzTooltipTitle
+              nzTooltipTitle="Collections"
+              eoNgFeedbackTooltip
+              [nzTooltipMouseEnterDelay]="0.4"
+              class="text-lg tab-content"
+            >
+              <eo-iconpark-icon name="folder-open"></eo-iconpark-icon>
+            </span>
+          </ng-template>
+          <pc-api-group-tree class="tree-sider"></pc-api-group-tree>
+        </eo-ng-tab>
+        <eo-ng-tab [nzTitle]="historyTitle" *ngIf="!store.isShare">
+          <ng-template #historyTitle>
+            <span
+              i18n-nzTooltipTitle
+              nzTooltipTitle="History"
+              eoNgFeedbackTooltip
+              [nzTooltipMouseEnterDelay]="0.4"
+              class="text-lg tab-content"
+            >
+              <eo-iconpark-icon name="history"></eo-iconpark-icon>
+            </span>
+          </ng-template>
+          <eo-history class="tree-sider"></eo-history>
+        </eo-ng-tab>
+      </eo-ng-tabset>
+      <nz-resize-handle class="vertical container-draggable" [ngClass]="{ isDragging }" nzDirection="right">
+        <div class="left"></div>
+        <div class="right"></div>
+      </nz-resize-handle>
+    </eo-ng-content>
+  </eo-ng-sider>
+  <eo-ng-content class="inner-content">
+    <!--Tab Bar -->
+    <eo-ng-header class="flex items-center tabs-bar">
+      <eo-tab
+        class="flex-1"
+        [list]="apiTab.BASIC_TABS"
+        tabStorageKey="API_TAB_STORAGE_KEY"
+        [handleDataBeforeCache]="apiTab.handleDataBeforeCache"
+        [handleDataBeforeGetCache]="apiTab.handleDataBeforeGetCache"
+        [checkTabCanLeave]="apiTab.componentRef?.checkTabCanLeave"
+        (beforeClose)="apiTab.beforeTabClose($event)"
+        [addDropDown]="newTabTemplate"
+        [titleLabel]="titleLabel"
+        (nzAdd)="apiTabComponent.newTab()"
+        #apiTabComponent
+      ></eo-tab>
+      <eo-ng-dropdown-menu #newTabTemplate>
+        <ul nz-menu>
+          <li nz-menu-item (click)="apiTabComponent.newTab()">HTTP</li>
+          <li nz-menu-item (click)="apiTabComponent.newTab('ws')">Websocket</li>
+        </ul>
+      </eo-ng-dropdown-menu>
+      <ng-template #titleLabel let-item="item">
+        <span class="mr-[5px] font-light method-text"> {{ item?.extends?.method }}</span>
+      </ng-template>
+      <!-- Env Select -->
+      <eo-env-select class="flex items-center h-full"></eo-env-select>
+    </eo-ng-header>
+    <!-- Content -->
+    <eo-ng-layout class="content_container {{ this.showChildBar ? 'has_tab_page' : '' }}">
+      <eo-ng-layout>
+        <!-- Child Tab Bar -->
+        <eo-ng-tabset class="inside_page_tabset" *ngIf="this.showChildBar" nzLinkRouter>
+          <eo-ng-tab *ngFor="let tab of renderTabs">
+            <a *nzTabLink nz-tab-link [routerLink]="['http/' + tab.routerLink]" queryParamsHandling="merge">
+              {{ tab.title }}
+              <nz-badge *ngIf="apiTabComponent.getCurrentTab()?.extends?.hasChanged?.[tab.id]" class="" nzStatus="default"></nz-badge>
+            </a>
+          </eo-ng-tab>
+        </eo-ng-tabset>
+        <!-- Get router child component by activate -->
+        <router-outlet (activate)="onActivate($event)"></router-outlet>
+      </eo-ng-layout>
+      <!-- Right Sider -->
+      <eo-ng-sider
+        *ngIf="!store.isShare && rightExtras.length"
+        nz-resizable
+        [nzWidth]="rightSiderWidth"
+        [nzMaxWidth]="500"
+        [nzMinWidth]="RIGHT_SIDER_SHRINK_WIDTH"
+        (nzResize)="onRightPanelResize($event)"
+      >
+        <nz-resize-handle *ngIf="!store.isShare" class="bottom-0 z-10 vertical container-draggable" nzDirection="left">
+          <div class="left"></div>
+          <div class="right"></div>
+        </nz-resize-handle>
+        <div class="flex flex-col p-2">
+          <ng-container *ngFor="let item of rightExtras">
+            <button
+              eo-ng-button
+              nzType="text"
+              eoNgFeedbackTooltip
+              [nzTooltipTitle]="item.tooltip"
+              (click)="item.click(apiTab.componentRef.model)"
+            >
+              <eo-iconpark-icon [name]="item.icon" size="20px"> </eo-iconpark-icon>
+            </button>
+          </ng-container>
+        </div>
+      </eo-ng-sider>
+    </eo-ng-layout>
+  </eo-ng-content>
+</eo-ng-layout>

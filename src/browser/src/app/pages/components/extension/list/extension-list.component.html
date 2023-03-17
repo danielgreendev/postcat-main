@@ -1,0 +1,85 @@
+<div class="px-6 overflow-auto extension-list">
+  <ng-container *ngIf="!extensionList?.length">
+    <nz-spin class="w-fit mx-auto my-[30px]" nzSimple *ngIf="loading"></nz-spin>
+    <nz-empty class="w-fit mx-auto my-[30px]" *ngIf="!loading"></nz-empty>
+  </ng-container>
+  <div class="grid gap-6 py-5 2xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-1">
+    <div
+      class="flex flex-col flex-wrap w-full transition-shadow duration-300 rounded border-all plugin-block hover:shadow-lg"
+      *ngFor="let it of extensionList"
+      trace
+      traceID="click_extension_detail"
+      [traceParams]="{ extension_id: it.name }"
+      (click)="clickExtension($event, it)"
+    >
+      <div class="flex flex-col w-full h-full p-5">
+        <div class="flex flex-col flex-1 w-full">
+          <div class="flex items-center">
+            <nz-avatar class="flex-shrink-0" [nzSize]="35" [nzShape]="'square'" [nzSrc]="it.logo"></nz-avatar>
+            <div class="flex flex-col flex-1 w-0">
+              <div class="flex items-center ml-[20px]">
+                <span class="flex-1 font-bold truncate" [title]="it.title">{{ it.title }}</span>
+                <div *ngIf="type === 'installed'">
+                  <nz-tag [nzColor]="'default'">v{{ it.version }}</nz-tag>
+                </div>
+                <div *ngIf="type !== 'installed'">
+                  <span
+                    *ngIf="extensionService.installedMap?.has(it.name)"
+                    class="p-1 text-xs rounded-sm text-success border-all whitespace-nowrap"
+                    i18n
+                    >Installed</span
+                  >
+                </div>
+              </div>
+              <nz-space [nzSplit]="spaceSplit" class="subtitle ml-[20px] text-tips text-[12px]">
+                <ng-template #spaceSplit>
+                  <nz-divider nzType="vertical"></nz-divider>
+                </ng-template>
+                <span *nzSpaceItem>{{ it.author }}</span>
+                <ng-container *ngIf="type !== 'installed'">
+                  <span class="flex items-center" *nzSpaceItem>
+                    <eo-iconpark-icon class="mr-[5px]" name="download-two" size="14px"></eo-iconpark-icon>
+                    {{ it.downloadCounts | downloadCountFormater }}
+                  </span>
+                </ng-container>
+              </nz-space>
+            </div>
+          </div>
+          <div class="flex mt-[15px] text-[12px] desc leading-[1.65] text-tips">{{ it.description }}</div>
+        </div>
+        <div class="flex items-center justify-between" *ngIf="type === 'installed'">
+          <div>
+            <ng-container *ngIf="it.features?.configuration">
+              <a eo-ng-button nzType="link" i18n (click)="clickExtension($event, it, 0)">Setting</a>
+              <nz-divider nzType="vertical"></nz-divider>
+            </ng-container>
+            <a eo-ng-button nzType="link" (click)="clickExtension($event, it, it.features?.configuration ? 1 : 0)"
+              ><span data-id="details" i18n="@@ExtensionDetail">Details</span></a
+            >
+          </div>
+          <eo-ng-switch
+            click-stop-propagation
+            [(ngModel)]="it.enable"
+            (ngModelChange)="extensionService.toggleEnableExtension(it.name, $event)"
+          ></eo-ng-switch>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="!loading">
+    <eo-ng-feedback-alert class="block mb-[20px]" nzType="default" [nzMessage]="templateRefMsg" nzShowIcon></eo-ng-feedback-alert>
+    <ng-template #templateRefMsg>
+      <div class="text" i18n
+        >Couldn't find the extension you were looking for?
+        <a
+          [href]="githubFeatureUrl"
+          trace
+          traceID="jump_to_github"
+          [traceParams]="{ where_jump_to_github: 'request_extension' }"
+          target="_blank"
+          >request extension...</a
+        >
+      </div>
+    </ng-template>
+  </ng-container>
+</div>

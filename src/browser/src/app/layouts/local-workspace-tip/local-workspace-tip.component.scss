@@ -1,0 +1,14 @@
+.remote-notification {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--remote-notification-height, 0);
+  overflow: hidden;
+}
+
+:host ::ng-deep {
+  .ant-alert {
+    width: 100%;
+    text-align: center;
+  }
+}

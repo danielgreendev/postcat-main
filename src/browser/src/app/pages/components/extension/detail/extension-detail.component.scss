@@ -1,0 +1,91 @@
+:host {
+  overflow: initial;
+}
+
+.ant-divider-vertical {
+  margin: 0 16px;
+}
+
+:host ::ng-deep {
+  .title {
+    .ant-tag {
+      border-radius: 4px;
+      padding: 0 4px;
+    }
+  }
+
+  .subtitle {
+    .ant-divider {
+      @apply mx-[12px];
+    }
+  }
+
+  .ant-skeleton {
+    display: block;
+
+    &.loading {
+      display: table;
+    }
+  }
+
+  .ant-tabs-nav::before {
+    z-index: 10;
+  }
+
+  .ant-tabs-nav-list {
+    margin-left: 30px;
+  }
+
+  .ant-tabs {
+    overflow: hidden;
+
+    &:not(.settings) {
+      .ant-tabs-content-holder {
+        padding-top: 35px;
+      }
+    }
+  }
+
+  .ant-tabs-content-holder {
+    padding-top: 12px;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+    overflow: auto;
+  }
+
+  .ant-skeleton-element .ant-skeleton-button {
+    width: 100%;
+  }
+
+  .ant-tabs-tab {
+    padding: 10px 0;
+  }
+
+  .tab-content-container {
+    @apply px-[40px] m-auto;
+  }
+
+  .md-preview {
+    img {
+      max-width: 800px;
+    }
+  }
+
+  .extension-detail {
+    height: 70vh;
+    overflow: hidden;
+
+    .ant-descriptions-row > td {
+      padding-bottom: 8px;
+    }
+
+    .ant-descriptions-item-content,
+    .ant-descriptions-item-label {
+      color: var(--text-secondary-color);
+    }
+  }
+}
+
+a {
+  color: var(--info-color);
+}

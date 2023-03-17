@@ -1,0 +1,22 @@
+.desc {
+  overflow: hidden;
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.extension-list {
+  height: 70vh;
+}
+
+.plugin-block {
+  user-select: none;
+  cursor: pointer;
+}
+
+@media (max-width: 1279.9px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

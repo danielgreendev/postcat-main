@@ -1,0 +1,129 @@
+<div class="flex flex-col h-full extension-detail" *ngIf="extensionDetail">
+  <div class="top-0 z-50">
+    <div class="pb-[16px]">
+      <div class="leading-[40px] h-[40px] ml-[5px]">
+        <button eo-ng-button nzType="text" (click)="backToList()" class="flex !pl-[12px]">
+          <eo-iconpark-icon name="return" size="16px"></eo-iconpark-icon><span class="ml-[6px]" i18n>Back</span>
+        </button>
+      </div>
+      <nz-divider class="m-0"></nz-divider>
+      <div class="flex items-center justify-between mt-[20px] px-[40px]">
+        <div class="flex items-center">
+          <nz-avatar nzSize="small" [nzSize]="50" [nzShape]="'square'" nzSrc="{{ extensionDetail.logo }}"></nz-avatar>
+          <div class="flex flex-col">
+            <nz-space class="title ml-[12px]" [nzSize]="12">
+              <span *nzSpaceItem class="font-bold text-[16px]">{{ extensionDetail.title }}</span>
+              <ng-container *ngIf="extensionDetail?.installed">
+                <nz-tag *nzSpaceItem [nzColor]="'default'">v{{ extensionDetail.version }}</nz-tag>
+              </ng-container>
+            </nz-space>
+            <nz-space [nzSplit]="spaceSplit" class="subtitle ml-[12px] text-tips">
+              <ng-template #spaceSplit>
+                <nz-divider nzType="vertical"></nz-divider>
+              </ng-template>
+
+              <span *nzSpaceItem>{{ extensionDetail.author }}</span>
+              <ng-container *ngIf="!extensionDetail.installed">
+                <span class="flex items-center" *nzSpaceItem>
+                  <eo-iconpark-icon class="mr-[5px]" name="download-two" size="16px"></eo-iconpark-icon>
+                  {{ extensionDetail.downloadCounts | downloadCountFormater }}
+                </span>
+              </ng-container>
+            </nz-space>
+          </div>
+        </div>
+        <div class="flex items-center" *ngIf="isAvailableElectron">
+          <div *ngIf="extensionDetail?.installed" class="mr-[20px]">
+            <eo-ng-switch
+              class="mr-[3px]"
+              [(ngModel)]="extensionDetail.enable"
+              nzSize="small"
+              (ngModelChange)="extensionService.toggleEnableExtension(extensionDetail.name, $event)"
+            >
+            </eo-ng-switch>
+            <span *ngIf="!extensionDetail.enable" i18n>Enable</span>
+            <span *ngIf="extensionDetail.enable" i18n>Disable</span>
+          </div>
+          <button
+            eo-ng-button
+            nzType="primary"
+            class="h-[30px] w-20"
+            [nzLoading]="isOperating"
+            [nzType]="extensionDetail?.installed ? 'default' : 'primary'"
+            (click)="handleInstall()"
+            trace
+            [traceID]="!extensionDetail?.installed ? 'click_install_extension' : ''"
+            [traceParams]="{ extension_id: extensionDetail.name }"
+          >
+            <span *ngIf="extensionDetail?.installed" i18n>Uninstall</span>
+            <span *ngIf="!extensionDetail?.installed" i18n>Install</span>
+          </button>
+        </div>
+        <div class="flex flex-col" *ngIf="!isAvailableElectron">
+          <a [href]="APP_CONFIG.serverUrl" target="_bank"><button eo-ng-button nzType="primary" i18n>Jump to Use</button></a>
+          <p class="text-[12px] mt-[10px] text-tips" i18n>* This exension only support web</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="flex flex-col h-full overflow-hidden">
+    <eo-ng-tabset
+      [(nzSelectedIndex)]="nzSelectedIndex"
+      [nzTabBarExtraContent]="extraTemplate"
+      [nzAnimated]="false"
+      [class]="{ settings: nzSelectedIndex === 0 && extensionDetail?.features?.configuration }"
+      (nzSelectChange)="handleTabChange($event)"
+    >
+      <!-- Setting -->
+      <eo-ng-tab *ngIf="extensionDetail?.features?.configuration && extensionDetail?.installed" i18n-nzTitle nzTitle="Settings">
+        <eo-extension-setting
+          class="block tab-content-container"
+          [configuration]="extensionDetail?.features?.configuration"
+          [extName]="extensionDetail.name"
+        ></eo-extension-setting>
+      </eo-ng-tab>
+      <!-- Details -->
+      <eo-ng-tab i18n-nzTitle="@@ExtensionDetail" nzTitle="Details">
+        <div class="h-full overflow-auto tab-content-container pt-[10px]">
+          <nz-skeleton [nzLoading]="introLoading" [nzActive]="true" [class]="{ loading: introLoading }">
+            <eo-shadow-dom class="md-preview" [text]="extensionDetail.introduction" [options]="{ html: true }"> </eo-shadow-dom>
+          </nz-skeleton>
+        </div>
+      </eo-ng-tab>
+      <!-- Support -->
+      <eo-ng-tab i18n-nzTitle nzTitle="Support">
+        <nz-descriptions [nzColumn]="1" nzTitle="" class="tab-content-container">
+          <nz-descriptions-item i18n-nzTitle nzTitle="Author">{{ extensionDetail.author }}</nz-descriptions-item>
+          <nz-descriptions-item i18n-nzTitle nzTitle="Version">{{ extensionDetail.version }} </nz-descriptions-item>
+          <nz-descriptions-item *ngIf="extensionDetail.repository?.url" i18n-nzTitle nzTitle="Repository">
+            <a [href]="extensionDetail.repository.url.replace('git+', '')" target="_blank">
+              {{ extensionDetail.repository.url.replace('git+', '') }}
+            </a>
+          </nz-descriptions-item>
+          <nz-descriptions-item *ngIf="extensionDetail.homepage" i18n-nzTitle nzTitle="Homepage">
+            <a [href]="extensionDetail.homepage" target="_blank">{{ extensionDetail.homepage }}</a>
+          </nz-descriptions-item>
+          <nz-descriptions-item *ngIf="extensionDetail.bugs?.url" i18n-nzTitle nzTitle="BugReport">
+            <a [href]="extensionDetail.bugs.url" target="_blank">{{ extensionDetail.bugs.url }}</a>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </eo-ng-tab>
+      <!-- ChangeLog -->
+      <eo-ng-tab *ngIf="changeLog" i18n-nzTitle nzTitle="ChangeLog">
+        <nz-skeleton class="tab-content-container" [nzLoading]="changelogLoading" [nzActive]="true">
+          <eo-shadow-dom *ngIf="!changeLogNotFound" class="md-preview" [text]="changeLog"> </eo-shadow-dom>
+          <nz-result nzStatus="info" i18n-nzTitle nzTitle="Changelog failed to load" *ngIf="changeLogNotFound">
+            <div nz-result-extra>
+              <button eo-ng-button nzType="primary" i18n (click)="fetchChangelog()">Reacquire</button>
+            </div>
+          </nz-result>
+        </nz-skeleton>
+      </eo-ng-tab>
+    </eo-ng-tabset>
+    <ng-template #extraTemplate>
+      <button *ngIf="false" eo-ng-button nzType="primary" class="mr-[20px] h-[30px]" (click)="jumpToClient()">
+        <span i18n>Need Client</span>
+      </button>
+    </ng-template>
+  </section>
+</div>

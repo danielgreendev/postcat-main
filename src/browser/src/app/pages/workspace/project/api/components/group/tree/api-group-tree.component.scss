@@ -1,0 +1,44 @@
+:host ::ng-deep {
+  display: block;
+  height: 100%;
+
+  .ant-skeleton-content {
+    padding: 10px;
+  }
+
+  .group-tree {
+    overflow: hidden auto;
+    background-color: var(--tree-background-color);
+    height: calc(100% - 52px);
+  }
+
+  .dragging::after {
+    display: none;
+    animation: initial;
+  }
+
+  .ant-tree-indent-unit {
+    width: 24px;
+  }
+
+  .ant-tree-switcher {
+    width: 24px;
+  }
+
+  .width-box {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.ant-dropdown-menu {
+  min-width: 100px;
+}
+
+.method-text {
+  max-width: 50px;
+  min-width: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}

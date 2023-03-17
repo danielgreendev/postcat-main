@@ -1,0 +1,8 @@
+.env-main {
+  height: 100%;
+}
+
+.env-list {
+  height: calc(100% - var(--tree-item-height));
+  overflow: auto;
+}
